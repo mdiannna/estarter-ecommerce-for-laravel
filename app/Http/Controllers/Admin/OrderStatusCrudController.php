@@ -7,6 +7,9 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 // VALIDATION: change the requests to match your own file names if you need form validation
 use App\Http\Requests\OrderStatusRequest as StoreRequest;
 use App\Http\Requests\OrderStatusRequest as UpdateRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Models\OrderStatus;
+use App\Mail\OrderStatusUpdate;
 
 class OrderStatusCrudController extends CrudController
 {
@@ -98,6 +101,15 @@ class OrderStatusCrudController extends CrudController
         ]);
     }
 
+
+    public function sendStatusUpdateMail(OrderStatus $orderStatus) 
+    {
+        // TO DO: get right user email
+        $myEmail = 'estartertest@test.com';
+        Mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus));
+    }
+
+
 	public function store(StoreRequest $request)
 	{
         $redirect_location = parent::storeCrud();
@@ -107,8 +119,14 @@ class OrderStatusCrudController extends CrudController
 
 	public function update(UpdateRequest $request)
 	{
+        
         $redirect_location = parent::updateCrud();
 
+        $orderStatus = $this->crud->entry;
+        $this->sendStatusUpdateMail($orderStatus);
+
         return $redirect_location;
+
+
 	}
 }
