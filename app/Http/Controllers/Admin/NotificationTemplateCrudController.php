@@ -156,11 +156,6 @@ class NotificationTemplateCrudController extends CrudController
             $this->crud->allowAccess('update');
         }
 
-        // Allow clone access
-        if ($user->can('clone_notification_template')) {
-            $this->crud->addButtonFromView('line', trans('notification_template.clone'), 'clone_notification_template', 'end');
-        }
-
         // Allow delete access
         if ($user->can('delete_notification_template')) {
             $this->crud->allowAccess('delete');
