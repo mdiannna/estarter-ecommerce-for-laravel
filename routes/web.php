@@ -21,6 +21,7 @@ Route::group(['middleware' => 'admin',
 	CRUD::resource('order-statuses', 'OrderStatusCrudController');
 	CRUD::resource('clients', 'ClientCrudController');
 	CRUD::resource('users', 'UserCrudController');
+	CRUD::resource('notification-templates', 'NotificationTemplateCrudController');
 
 	// Clone Products
 	Route::post('products/clone', ['as' => 'clone.product', 'uses' => 'ProductCrudController@cloneProduct']);

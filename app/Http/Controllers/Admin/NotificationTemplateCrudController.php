@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
-use App\Http\Requests\NotificationRequest as StoreRequest;
-use App\Http\Requests\NotificationRequest as UpdateRequest;
+use App\Http\Requests\NotificationTemplateRequest as StoreRequest;
+use App\Http\Requests\NotificationTemplateRequest as UpdateRequest;
 
-class NotificationCrudController extends CrudController
+class NotificationTemplateCrudController extends CrudController
 {
     public function setup()
     {
@@ -18,9 +18,9 @@ class NotificationCrudController extends CrudController
         | BASIC CRUD INFORMATION
         |--------------------------------------------------------------------------
         */
-        $this->crud->setModel('App\Models\Notification');
-        $this->crud->setRoute('admin/notification');
-        $this->crud->setEntityNameStrings('notification', 'notifications');
+        $this->crud->setModel('App\Models\NotificationTemplate');
+        $this->crud->setRoute('admin/notification-templates');
+        $this->crud->setEntityNameStrings('notification template', 'notification templates');
 
         /*
         |--------------------------------------------------------------------------
@@ -36,6 +36,8 @@ class NotificationCrudController extends CrudController
         // $this->crud->removeField('name', 'update/create/both');
         // $this->crud->removeFields($array_of_names, 'update/create/both');
 
+        $this->setFields();
+
         // ------ CRUD COLUMNS
         // $this->crud->addColumn(); // add a single column, at the end of the stack
         // $this->crud->addColumns(); // add multiple columns, at the end of the stack
@@ -47,11 +49,11 @@ class NotificationCrudController extends CrudController
         $this->crud->addColumns([
             [
                 'name'  => 'name',
-                'label' => trans('notification.name'),
+                'label' => trans('notificationtemplates.name'),
             ],
             [
                 'name'  => 'content',
-                'label' => trans('notification.content')
+                'label' => trans('notificationtemplates.content')
             ]
 
         ]);
@@ -109,6 +111,60 @@ class NotificationCrudController extends CrudController
         // $this->crud->orderBy();
         // $this->crud->groupBy();
         // $this->crud->limit();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERMISSIONS
+        |-------------------------------------------------------------------------
+        */
+        $this->setPermissions();
+    }
+
+    public function setFields() {
+         $this->crud->addFields([
+            [
+                'name'  => 'name',
+                'label' => trans('notificationtemplates.name'),
+            ],
+            [
+                'name'  => 'content',
+                'label' => trans('notificationtemplates.content')
+            ]
+
+        ]);
+    }
+
+    public function setPermissions() {
+        // Get authenticated user
+        $user = auth()->user();
+
+        // Deny all accesses
+        $this->crud->denyAccess(['list', 'create', 'update', 'delete']);
+
+        // Allow list access
+        if ($user->can('list_notification_templates')) {
+            $this->crud->allowAccess('list');
+        }
+
+        // Allow create access
+        if ($user->can('create_notification_template')) {
+            $this->crud->allowAccess('create');
+        }
+
+        // Allow update access
+        if ($user->can('update_notification_template')) {
+            $this->crud->allowAccess('update');
+        }
+
+        // Allow clone access
+        if ($user->can('clone_notification_template')) {
+            $this->crud->addButtonFromView('line', trans('notification_template.clone'), 'clone_notification_template', 'end');
+        }
+
+        // Allow delete access
+        if ($user->can('delete_notification_template')) {
+            $this->crud->allowAccess('delete');
+        }
     }
 
     public function store(StoreRequest $request)

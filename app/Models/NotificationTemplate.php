@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Notification extends Model
+class NotificationTemplate extends Model
 {
     use CrudTrait;
 

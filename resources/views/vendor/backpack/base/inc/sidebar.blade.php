@@ -59,6 +59,9 @@
             <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/order-statuses') }}"><i class="fa fa-list-ul"></i> <span>{{ trans('order.order_statuses') }}</span></a></li>
           @endcan
 
+            <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/notification-templates') }}"><i class="fa fa-balance-scale"></i> <span>{{ trans('notificationtemplates.notification_templates') }}</span></a></li>
+          
+
           <li class="treeview">
             <a href="#"><i class="fa fa-group"></i> <span>Users, Roles, Permissions</span> <i class="fa fa-angle-left pull-right"></i></a>
             <ul class="treeview-menu">

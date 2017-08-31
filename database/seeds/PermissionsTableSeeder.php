@@ -60,6 +60,11 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'create_client'],
             ['name' => 'update_client'],
             ['name' => 'delete_client'],
+
+            ['name' => 'list_notification_templates'],
+            ['name' => 'create_notification_templates'],
+            ['name' => 'update_notification_templates'],
+            ['name' => 'delete_notification_templates'],
     	];
 
     	DB::table('permissions')->insert($permissions);
