@@ -128,7 +128,8 @@ class NotificationTemplateCrudController extends CrudController
             ],
             [
                 'name'  => 'content',
-                'label' => trans('notificationtemplates.content')
+                'label' => trans('notificationtemplates.content'),
+                'type' => 'wysiwyg',
             ]
 
         ]);
