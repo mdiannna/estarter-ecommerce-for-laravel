@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
+use App\Mail\OrderStatusUpdate;
+use Illuminate\Support\Facades\Mail;
+
 
 class OrderStatusHistory extends Model
 {
@@ -25,6 +28,23 @@ class OrderStatusHistory extends Model
 	];
     // protected $hidden = [];
     // protected $dates = [];
+
+	/*
+	|--------------------------------------------------------------------------
+	| EVENTS
+	|--------------------------------------------------------------------------
+	*/
+	public function sendStatusUpdateMail(OrderStatus $orderStatus, Mail $mail) 
+    {
+        $myEmail = 'estartertest@test.com';
+        try {
+        	$mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus));
+        } catch (Exception $e){
+        	return 0;
+        }
+        return 1;
+    }
+
 
     /*
 	|--------------------------------------------------------------------------

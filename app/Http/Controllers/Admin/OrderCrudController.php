@@ -8,6 +8,7 @@ use App\Models\OrderStatus;
 use App\Models\OrderStatusHistory;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class OrderCrudController extends CrudController
 {
@@ -122,10 +123,14 @@ class OrderCrudController extends CrudController
         return view('admin.order.view', compact('crud', 'order', 'orderStatuses'));
     }
 
-    public function updateStatus(Request $request, OrderStatusHistory $orderStatusHistory)
+    public function updateStatus(Request $request, OrderStatusHistory $orderStatusHistory, OrderStatus $orderStatus, Mail $mail)
     {
         // Create history entry
         $orderStatusHistory->create($request->except('_token'));
+
+        // Send order status update mail
+        $status_id =  $request->input('status_id');        
+        $orderStatusHistory->sendStatusUpdateMail($orderStatus->find($status_id), $mail);
 
         $this->crud->update($request->input('order_id'), ['status_id' => $request->input('status_id')]);
 

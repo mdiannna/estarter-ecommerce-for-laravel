@@ -7,7 +7,6 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 // VALIDATION: change the requests to match your own file names if you need form validation
 use App\Http\Requests\OrderStatusRequest as StoreRequest;
 use App\Http\Requests\OrderStatusRequest as UpdateRequest;
-use Illuminate\Support\Facades\Mail;
 use App\Models\OrderStatus;
 use App\Mail\OrderStatusUpdate;
 
@@ -35,7 +34,15 @@ class OrderStatusCrudController extends CrudController
             [
                 'name'  => 'name',
                 'label' => trans('order.status_name'),
-            ]
+            ],
+            [
+               'name'       => 'notification_template_id',
+               'label'      => trans('notificationtemplates.notification_template'),
+               'type'       => 'select2',
+               'entity'     => 'notificationTemplate',
+               'attribute'  => 'name',
+               'model'      => "App\Models\NotificationTemplate",
+            ],
         ]);
 
         /*
@@ -97,17 +104,19 @@ class OrderStatusCrudController extends CrudController
                 'name'  => 'name',
                 'label' => trans('order.status_name'),
                 'type'  => 'text',
-            ]
+            ],
+            [
+               'name'       => 'notification_template_id',
+               'label'      => trans('notificationtemplates.notification_template'),
+               'type'       => 'select2',
+               'entity'     => 'notificationTemplate',
+               'attribute'  => 'name',
+               'model'      => "App\Models\NotificationTemplate",
+            ],
         ]);
     }
 
 
-    public function sendStatusUpdateMail(OrderStatus $orderStatus) 
-    {
-        // TO DO: get right user email
-        $myEmail = 'estartertest@test.com';
-        Mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus));
-    }
 
 
 	public function store(StoreRequest $request)
@@ -123,7 +132,6 @@ class OrderStatusCrudController extends CrudController
         $redirect_location = parent::updateCrud();
 
         $orderStatus = $this->crud->entry;
-        $this->sendStatusUpdateMail($orderStatus);
 
         return $redirect_location;
 

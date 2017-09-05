@@ -19,7 +19,8 @@ class OrderStatus extends Model
     //protected $primaryKey = 'id';
     public $timestamps = false;
     // protected $guarded = ['id'];
-    protected $fillable = ['name'];
+    protected $fillable = ['name',
+    						'notification_template_id'];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -34,6 +35,11 @@ class OrderStatus extends Model
 	| RELATIONS
 	|--------------------------------------------------------------------------
 	*/
+
+	public function notificationTemplate()
+	{
+		return $this->hasOne('App\Models\NotificationTemplate', 'id', 'notification_template_id');
+	}
 
     /*
 	|--------------------------------------------------------------------------

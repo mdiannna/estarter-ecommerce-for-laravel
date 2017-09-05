@@ -36,10 +36,7 @@ class OrderStatusUpdate extends Mailable
      * @return $this
      */
     public function build()
-    {
-        // return $this->from('test@estarter.com')
-        //             ->view('emails.notifications.order_status_update');
-
+    { 
         return $this->view('emails.notifications.order_status_update');
     }
 }
