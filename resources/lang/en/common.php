@@ -25,5 +25,6 @@ return [
 	'years'            => 'Years',
 	'date'             => 'Date',
 	'total'            => 'Total',
-
+	'parameter'		   => 'Parameter',
+	'is_wrong'		   => 'is wrong'
 ];

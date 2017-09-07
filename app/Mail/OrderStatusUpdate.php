@@ -52,65 +52,64 @@ class OrderStatusUpdate extends Mailable
 
         while($posStart !== false && $posEnd !== false ) {
 
-            $parameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );            
+            $parameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );
             
-            $posSeparator = strpos($orderMailContent, ",", $posStart);
-            var_dump($posSeparator);
+            // $parameter = preg_replace('/\s+/', '', $parameter);
+            // $parameter = str_replace('&nbsp;', '', $parameter);
 
-            var_dump($parameter);
+
+
+            
+
+            
+
+            // Look for , between {{ and }} to see how many parameters are
+            $posSeparator = strpos($orderMailContent, ",", $posStart);
+
 
             // If there are two parameters, parse them both
             if($posSeparator !== false && $posSeparator < $posEnd) {
                 try {
                     $parameter1 = substr($orderMailContent, $posStart+2, $posSeparator-$posStart-2 );             
                     $parameter2 = substr($orderMailContent, $posSeparator+2, $posEnd-$posSeparator-2 );             
-                    
+                        
+
                     $parameter1Value =  ${"order"}->{$parameter1};
-                    if(isset($parameter1Value)) {
+                    if(isset($parameter1Value) && isset($parameter1) && isset($parameter2)) {
                         $parameter2Value =  $parameter1Value->{$parameter2};    
                         $finalParameterValue = $parameter2Value;         
                     }
                     else {
-                        \Alert::error("Error at parameter" . $parameter)->flash();    
+                        \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
                     }
-
-                    
                 } catch(Exception $e) {
-                    \Alert::error("Error")->flash();
+                    \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
                 }
-                
             }
-            // If there is only one parameter
+            // If there is only one parameter, parse just one
             else {
                 $finalParameterValue =  ${"order"}->{$parameter};
-                // dd($finalParameterValue);
+                var_dump($finalParameterValue);
+                if(!isset($finalParameterValue)) {
+                    \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();     
+                }
             }
 
+            if(isset($finalParameterValue)) {
+                $orderMailContent = str_replace("{{" . $parameter . "}}", $finalParameterValue, $orderMailContent);    
+            }
+            else {
+                // Show error notification
+                $orderMailContent = str_replace("{{" . $parameter . "}}", "{" . $parameter . "}", $orderMailContent);       
+                 \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
+            }
 
-            $orderMailContent = str_replace("{{" . $parameter . "}}", $finalParameterValue, $orderMailContent);
-
-            
-            
-            // $orderStatusName = ${"orderStatus"}->{$parameter};
-            // $parameterValue =  ${"orderStatus"}->{$parameter};
-
-
-
-
+            // Look for more {{ and }}
             $posStart = strpos($orderMailContent, "{{");
             $posEnd = strpos($orderMailContent, "}}");
-            $posSeparator = strpos($orderMailContent, ",", $posStart);
         }
 
-        // dd(${"orderStatus"}->{$parameter});
-        // dd($orderStatusName);
-        // dd($orderStatus->{"name"});
-
-        // dd(${"orderMailContent"});
-        // dd($orderMailContent);
-        // dd($orderMailContent);
+        // dd($orderMailContenttent);
         return $orderMailContent;
-
-
     }
 }
