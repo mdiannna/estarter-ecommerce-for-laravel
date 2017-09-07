@@ -34,11 +34,11 @@ class OrderStatusHistory extends Model
 	| EVENTS
 	|--------------------------------------------------------------------------
 	*/
-	public function sendStatusUpdateMail(OrderStatus $orderStatus, Mail $mail) 
+	public function sendStatusUpdateMail(Mail $mail, OrderStatus $orderStatus, Order $order) 
     {
         $myEmail = 'estartertest@test.com';
         try {
-        	$mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus));
+        	$mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus, $order));
         } catch (Exception $e){
         	return 0;
         }
