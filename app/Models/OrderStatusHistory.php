@@ -7,7 +7,7 @@ use Backpack\CRUD\CrudTrait;
 use App\Mail\OrderStatusUpdate;
 use Illuminate\Support\Facades\Mail;
 use Exception;
-
+use App\User;
 
 class OrderStatusHistory extends Model
 {
@@ -35,18 +35,19 @@ class OrderStatusHistory extends Model
 	| EVENTS
 	|--------------------------------------------------------------------------
 	*/
-	public function sendStatusUpdateMail(Mail $mail, OrderStatus $orderStatus, Order $order) 
+	public function sendStatusUpdateMail(Mail $mail, OrderStatus $orderStatus, Order $order, User $user) 
     {
-        $myEmail = 'estartertest@test.com';
+        // $userEmail = 'estartertest@test.com';
+        $userEmail = $user->email;
         try {
         	$orderStatusUpdate = new OrderStatusUpdate($orderStatus, $order);
         	if($orderStatusUpdate->hasError) {
 	        	throw new Exception("Mail not sent");
         	}
-        	$mail::to($myEmail)->send($orderStatusUpdate);    		
+        	$mail::to($userEmail)->send($orderStatusUpdate);    		
 
         } catch (Exception $e){
-        	\Alert::error(trans("common.mail_not_sent"))->flash();  
+        	\Alert::error(trans("common.mail_not_sent") . ". " . trans("notificationtemplates.error_in_template") )->flash();  
         	return 0;
         }
         return 1;

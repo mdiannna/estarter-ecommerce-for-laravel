@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\OrderStatus;
 use App\Models\Order;
 
+
 class OrderStatusUpdate extends Mailable
 {
     use Queueable, SerializesModels;
@@ -82,6 +83,10 @@ class OrderStatusUpdate extends Mailable
                     $parameter2Value =  $parameter1Value->{$parameter2};    
                     $finalParameterValue = $parameter2Value;         
                 }
+                else{
+                    return null;
+                }
+                  
             }
             // If there is only one parameter, parse just one
             else {
