@@ -22,7 +22,7 @@ class OrderStatusUpdate extends Mailable
     public $orderStatus;
     public $mailContent;
     public $hasError;
-
+    public $errorMessage = "";
 
     /**
      * Create a new message instance.
@@ -37,6 +37,7 @@ class OrderStatusUpdate extends Mailable
 
         if(!isset($this->mailContent)) {
             $this->hasError = true;    
+
         }
     }
 
@@ -70,6 +71,7 @@ class OrderStatusUpdate extends Mailable
      */
     public function parseOrderStatusTemplate($orderStatus, $order) {
         $orderMailContent = $orderStatus->notificationTemplate->content;
+        $wrongParameters = array();
         
         $posStart = strpos($orderMailContent, "{{");
         $posEnd = strpos($orderMailContent, "}}");
@@ -110,9 +112,9 @@ class OrderStatusUpdate extends Mailable
                 $orderMailContent = str_replace("{{" . $substrParameter . "}}", $finalParameterValue, $orderMailContent);    
             }
             else {
-                // Show error notification
-                 \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();  
-                 return null;  
+             
+                $orderMailContent = str_replace("{{" . $substrParameter . "}}", "", $orderMailContent);
+                array_push($wrongParameters, $parameter);
             }
 
             // Look for more {{ and }}
@@ -120,6 +122,38 @@ class OrderStatusUpdate extends Mailable
             $posEnd = strpos($orderMailContent, "}}");
         }
 
+        if(count($wrongParameters) > 0) {
+             $i = 0;
+
+            if(count($wrongParameters) == 1){
+                $this->errorMessage = "Message was not sent: "  . "parameter ";
+            } else{
+                $this->errorMessage = "Message was not sent: "  . "parameters ";
+            }
+
+            foreach ($wrongParameters as $parameter) {
+            $this->errorMessage = $this->errorMessage . " {{" . $parameter . "}} " ;
+            if($i < count($wrongParameters)-1) {
+               $this->errorMessage = $this->errorMessage  . ",";
+            }
+            $i++;
+        }
+
+        if(count($wrongParameters) == 1){
+            $this->errorMessage = $this->errorMessage . "is incorrect";
+        }
+        else {
+            $this->errorMessage = $this->errorMessage . "are incorrect";
+        }
+
+        }
+
+
+                 
+        // dd( $this->errorMessage );
+        if($this->errorMessage != "") {
+            return null;
+        }
         return $orderMailContent;
     }
 }

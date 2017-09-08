@@ -39,20 +39,36 @@ class OrderStatusHistory extends Model
     {
         // $userEmail = 'estartertest@test.com';
         $userEmail = $user->email;
+          // \Alert::success("something")->flash();    
+        // $errorMessage = "sss";
+
         try {
         	$orderStatusUpdate = new OrderStatusUpdate($orderStatus, $order);
+        	
+        	// dd($orderStatusUpdate->errorMessage);
         	if($orderStatusUpdate->hasError) {
-	        	throw new Exception("Mail not sent");
+        		
+        		// dd($orderStatusUpdate->errorMessage);	
+	        	throw new Exception($orderStatusUpdate->errorMessage);
         	}
         	$mail::to($userEmail)->send($orderStatusUpdate);    
             \Alert::success(trans('mail.mail_was_sent'))->flash();    
 		
 
         } catch (Exception $e){
-        	\Alert::error(trans("mail.mail_not_sent") . ". " . trans("notificationtemplate.error_in_template") )->flash();  
-        	return 0;
+			// dd($e->getMessage());        
+        // 	\Alert::error(trans("mail.mail_not_sent") . ". " . trans("notificationtemplate.error_in_template")  . 
+        // 		$e->getMessage() . "")->flash();  
+        // \Alert::error("lalala");
+        	
+        	// dd($e->getMessage());        
+
+            \Alert::error($e->getMessage())->flash();    
+
+        	// return($e->getMessage());
+        	
         }
-        return 1;
+
     }
 
 
