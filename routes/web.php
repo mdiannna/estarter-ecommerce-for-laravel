@@ -10,6 +10,10 @@ Route::group(['middleware' => 'admin',
               'namespace'  => 'Admin'
 ], function () {
 
+	// // Send order status update mail
+	// Route::any('orders/update-status-mail', ['as' => 'sendOrderStatusUpdateMail', 
+	// 									'uses' => 'OrderCrudController@sendStatusUpdateMail']);
+	
 	CRUD::resource('categories', 'CategoryCrudController');
 	CRUD::resource('currencies', 'CurrencyCrudController');
 	CRUD::resource('carriers', 'CarrierCrudController');
@@ -28,6 +32,7 @@ Route::group(['middleware' => 'admin',
 
 	// Update Order Status
 	Route::post('orders/update-status', ['as' => 'updateOrderStatus', 'uses' => 'OrderCrudController@updateStatus']);
+	
 });
 
 

@@ -27,5 +27,4 @@ return [
 	'total'            => 'Total',
 	'parameter'		   => 'Parameter',
 	'is_wrong'		   => 'is wrong',
-	'mail_not_sent'	   => 'Mail not sent'
 ];

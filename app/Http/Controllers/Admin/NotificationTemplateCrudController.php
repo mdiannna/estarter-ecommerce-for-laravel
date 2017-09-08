@@ -49,11 +49,11 @@ class NotificationTemplateCrudController extends CrudController
         $this->crud->addColumns([
             [
                 'name'  => 'name',
-                'label' => trans('notificationtemplates.name'),
+                'label' => trans('notificationtemplate.name'),
             ],
             [
                 'name'  => 'content',
-                'label' => trans('notificationtemplates.content')
+                'label' => trans('notificationtemplate.content')
             ]
 
         ]);
@@ -124,11 +124,11 @@ class NotificationTemplateCrudController extends CrudController
          $this->crud->addFields([
             [
                 'name'  => 'name',
-                'label' => trans('notificationtemplates.name'),
+                'label' => trans('notificationtemplate.name'),
             ],
             [
                 'name'  => 'content',
-                'label' => trans('notificationtemplates.content'),
+                'label' => trans('notificationtemplate.content'),
                 'type' => 'wysiwyg',
             ]
 

@@ -44,10 +44,12 @@ class OrderStatusHistory extends Model
         	if($orderStatusUpdate->hasError) {
 	        	throw new Exception("Mail not sent");
         	}
-        	$mail::to($userEmail)->send($orderStatusUpdate);    		
+        	$mail::to($userEmail)->send($orderStatusUpdate);    
+            \Alert::success(trans('mail.mail_was_sent'))->flash();    
+		
 
         } catch (Exception $e){
-        	\Alert::error(trans("common.mail_not_sent") . ". " . trans("notificationtemplates.error_in_template") )->flash();  
+        	\Alert::error(trans("mail.mail_not_sent") . ". " . trans("notificationtemplate.error_in_template") )->flash();  
         	return 0;
         }
         return 1;

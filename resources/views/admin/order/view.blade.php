@@ -81,7 +81,10 @@
 								</select>
 							</div>
 
-							<button type="submit" class="btn btn-primary">{{ trans('order.update_status') }}</button>
+							
+							<button type="submit" class="btn btn-primary" name="submit-btn" value="update_status">{{ trans('order.update_status') }}</button>
+							<button type="submit" class="btn btn-primary" name="submit-btn" value="resend_mail">{{ trans('mail.resend_mail') }}</button>
+							{{-- <a href="{{ route('sendOrderStatusUpdateMail') }}">Resend mail</a> --}}
 						</form>
 					@else
 						<div class="alert alert-info">

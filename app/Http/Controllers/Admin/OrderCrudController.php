@@ -125,10 +125,22 @@ class OrderCrudController extends CrudController
         return view('admin.order.view', compact('crud', 'order', 'orderStatuses'));
     }
 
+
+    /**
+     * Send status update mail
+     *
+     * @return void
+     */
+    public function sendStatusUpdateMail(Request $request, OrderStatusHistory $orderStatusHistory, Mail $mail, OrderStatus $orderStatus, Order $order,  User $user) 
+    {
+        $orderStatusHistory->sendStatusUpdateMail($mail, $orderStatus, $order, $user);
+        // return redirect()->back();
+
+    }
+
     public function updateStatus(Request $request, OrderStatusHistory $orderStatusHistory,
                                  OrderStatus $orderStatus, Order $order, Mail $mail, User $user)
     {
-
         $status_id =  $request->input('status_id');        
         $order_id = $request->input('order_id');
         $thisOrder = $order->find($order_id);
@@ -137,22 +149,23 @@ class OrderCrudController extends CrudController
         $oldStatus = $thisOrder->status;
         $thisOrderStatus = $orderStatus->find($status_id);
         
-        if($thisOrderStatus != $oldStatus) { 
+        if($thisOrderStatus != $oldStatus && $request->input('submit-btn') == 'update_status') { 
             // Create history entry
             $orderStatusHistory->create($request->except('_token'));
-
             $this->crud->update($request->input('order_id'), ['status_id' => $request->input('status_id')]);
-
             \Alert::success(trans('order.status_updated'))->flash();    
 
-            // Send order status update mail
-            $orderStatusHistory->sendStatusUpdateMail($mail, $thisOrderStatus, $thisOrder, $thisUser);
+            $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);
         }
         else {
-            \Alert::warning(trans('order.status_is_the_same'))->flash();                
+            if($request->input('submit-btn') == 'resend_mail'){
+                $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);
+                \Alert::success(trans('mail.mail_was_sent'))->flash();    
+            }
+            else {
+                \Alert::warning(trans('order.status_is_the_same'))->flash();                
+            }
         }
-
-        
 
         return redirect()->back();
     }
