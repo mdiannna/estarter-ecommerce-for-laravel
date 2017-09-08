@@ -20,6 +20,7 @@ class OrderStatusUpdate extends Mailable
      */
     public $orderStatus;
     public $mailContent;
+    public $hasError;
 
 
     /**
@@ -29,9 +30,15 @@ class OrderStatusUpdate extends Mailable
      */
     public function __construct(OrderStatus $orderStatus, Order $order)
     {
+        $this->hasError = false; 
         $this->orderStatus = $orderStatus;
         $this->mailContent = $this->parseOrderStatusTemplate($orderStatus, $order);
+
+        if(!isset($this->mailContent)) {
+            $this->hasError = true;    
+        }
     }
+
 
     /**
      * Build the message.
@@ -39,11 +46,16 @@ class OrderStatusUpdate extends Mailable
      * @return $this
      */
     public function build()
-    { 
+    {   
 
         return $this->view('emails.notifications.order_status_update');
     }
 
+    /**
+     * Parse Order Status Tenokate and get parameters data.
+     *
+     * @return strng or null
+     */
     public function parseOrderStatusTemplate($orderStatus, $order) {
         $orderMailContent = $orderStatus->notificationTemplate->content;
         
@@ -52,56 +64,39 @@ class OrderStatusUpdate extends Mailable
 
         while($posStart !== false && $posEnd !== false ) {
 
-            $parameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );
+            $substrParameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );
             
-            // $parameter = preg_replace('/\s+/', '', $parameter);
-            // $parameter = str_replace('&nbsp;', '', $parameter);
-
-
-
+            $parameter = preg_replace('/\s+/', '', $substrParameter);
+            $parameter = str_replace('&nbsp;', '', $parameter);
             
-
-            
-
-            // Look for , between {{ and }} to see how many parameters are
-            $posSeparator = strpos($orderMailContent, ",", $posStart);
-
+            // Look for , to see how many parameters are
+            $posSeparator = strpos($parameter, ",", 0);
 
             // If there are two parameters, parse them both
-            if($posSeparator !== false && $posSeparator < $posEnd) {
-                try {
-                    $parameter1 = substr($orderMailContent, $posStart+2, $posSeparator-$posStart-2 );             
-                    $parameter2 = substr($orderMailContent, $posSeparator+2, $posEnd-$posSeparator-2 );             
-                        
+            if($posSeparator !== false) {
+                $parameter1 = substr($parameter, 0, $posSeparator );             
+                $parameter2 = substr($parameter, $posSeparator+1, strlen($parameter) );             
 
-                    $parameter1Value =  ${"order"}->{$parameter1};
-                    if(isset($parameter1Value) && isset($parameter1) && isset($parameter2)) {
-                        $parameter2Value =  $parameter1Value->{$parameter2};    
-                        $finalParameterValue = $parameter2Value;         
-                    }
-                    else {
-                        \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
-                    }
-                } catch(Exception $e) {
-                    \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
+                $parameter1Value =  ${"order"}->{$parameter1};
+                if(isset($parameter1Value) && isset($parameter1) && isset($parameter2)) {
+                    $parameter2Value =  $parameter1Value->{$parameter2};    
+                    $finalParameterValue = $parameter2Value;         
                 }
             }
             // If there is only one parameter, parse just one
             else {
                 $finalParameterValue =  ${"order"}->{$parameter};
-                var_dump($finalParameterValue);
-                if(!isset($finalParameterValue)) {
-                    \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();     
-                }
             }
+            
 
             if(isset($finalParameterValue)) {
-                $orderMailContent = str_replace("{{" . $parameter . "}}", $finalParameterValue, $orderMailContent);    
+                $orderMailContent = str_replace("{{" . $substrParameter . "}}", $finalParameterValue, $orderMailContent);    
             }
             else {
                 // Show error notification
-                $orderMailContent = str_replace("{{" . $parameter . "}}", "{" . $parameter . "}", $orderMailContent);       
-                 \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();    
+                 \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();  
+                 return null;  
+
             }
 
             // Look for more {{ and }}
@@ -109,7 +104,6 @@ class OrderStatusUpdate extends Mailable
             $posEnd = strpos($orderMailContent, "}}");
         }
 
-        // dd($orderMailContenttent);
         return $orderMailContent;
     }
 }

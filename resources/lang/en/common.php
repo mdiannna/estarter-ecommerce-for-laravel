@@ -26,5 +26,6 @@ return [
 	'date'             => 'Date',
 	'total'            => 'Total',
 	'parameter'		   => 'Parameter',
-	'is_wrong'		   => 'is wrong'
+	'is_wrong'		   => 'is wrong',
+	'mail_not_sent'	   => 'Mail not sent'
 ];

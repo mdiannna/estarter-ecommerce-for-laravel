@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 use App\Mail\OrderStatusUpdate;
 use Illuminate\Support\Facades\Mail;
+use Exception;
 
 
 class OrderStatusHistory extends Model
@@ -38,8 +39,14 @@ class OrderStatusHistory extends Model
     {
         $myEmail = 'estartertest@test.com';
         try {
-        	$mail::to($myEmail)->send(new OrderStatusUpdate($orderStatus, $order));
+        	$orderStatusUpdate = new OrderStatusUpdate($orderStatus, $order);
+        	if($orderStatusUpdate->hasError) {
+	        	throw new Exception("Mail not sent");
+        	}
+        	$mail::to($myEmail)->send($orderStatusUpdate);    		
+
         } catch (Exception $e){
+        	\Alert::error(trans("common.mail_not_sent"))->flash();  
         	return 0;
         }
         return 1;
