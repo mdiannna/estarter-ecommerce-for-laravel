@@ -4,8 +4,6 @@
 	<title></title>
 </head>
 <body>
-	<p>Test email order status: {{$orderStatus->name}} </p>
-	<p>Order status template: {!! $mailContent !!} </p>
-
+	{!! $mailContent !!}
 </body>
 </html>

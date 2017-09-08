@@ -128,23 +128,31 @@ class OrderCrudController extends CrudController
     public function updateStatus(Request $request, OrderStatusHistory $orderStatusHistory,
                                  OrderStatus $orderStatus, Order $order, Mail $mail, User $user)
     {
-        // Create history entry
-        $orderStatusHistory->create($request->except('_token'));
 
-        $this->crud->update($request->input('order_id'), ['status_id' => $request->input('status_id')]);
-
-        \Alert::success(trans('order.status_updated'))->flash();
-        
         $status_id =  $request->input('status_id');        
         $order_id = $request->input('order_id');
         $thisOrder = $order->find($order_id);
+        $thisUser = $thisOrder->user;
+
+        $oldStatus = $thisOrder->status;
         $thisOrderStatus = $orderStatus->find($status_id);
+        
+        if($thisOrderStatus != $oldStatus) { 
+            // Create history entry
+            $orderStatusHistory->create($request->except('_token'));
 
-        $user_id = $thisOrder->user_id;
-        $thisUser =  $user->find($user_id);
+            $this->crud->update($request->input('order_id'), ['status_id' => $request->input('status_id')]);
 
-        // Send order status update mail
-        $orderStatusHistory->sendStatusUpdateMail($mail, $thisOrderStatus, $thisOrder, $thisUser);
+            \Alert::success(trans('order.status_updated'))->flash();    
+
+            // Send order status update mail
+            $orderStatusHistory->sendStatusUpdateMail($mail, $thisOrderStatus, $thisOrder, $thisUser);
+        }
+        else {
+            \Alert::warning(trans('order.status_is_the_same'))->flash();                
+        }
+
+        
 
         return redirect()->back();
     }

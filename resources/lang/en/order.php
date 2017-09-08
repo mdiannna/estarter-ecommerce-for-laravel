@@ -20,5 +20,5 @@ return [
 	'billing_address'         => 'Billing address',
 	'billing_company_details' => 'Billing company details',
 	'quantity'                => 'Quantity',
-
+	'status_is_the_same'	  => 'Order status is the same',
 ];
