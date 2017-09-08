@@ -53,9 +53,20 @@ class OrderStatusUpdate extends Mailable
     }
 
     /**
+     * Filter parameter string - delete spaces and &nbsp;
+     *
+     * @return string
+     */
+    public function filterParametersString($substrParameter) {
+        $parameter = preg_replace('/\s+/', '', $substrParameter);
+        $parameter = str_replace('&nbsp;', '', $parameter);
+        return $parameter;
+    }
+
+    /**
      * Parse Order Status Tenokate and get parameters data.
      *
-     * @return strng or null
+     * @return string or null
      */
     public function parseOrderStatusTemplate($orderStatus, $order) {
         $orderMailContent = $orderStatus->notificationTemplate->content;
@@ -67,8 +78,7 @@ class OrderStatusUpdate extends Mailable
 
             $substrParameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );
             
-            $parameter = preg_replace('/\s+/', '', $substrParameter);
-            $parameter = str_replace('&nbsp;', '', $parameter);
+            $parameter = $this->filterParametersString($substrParameter);
             
             // Look for , to see how many parameters are
             $posSeparator = strpos($parameter, ",", 0);
@@ -91,6 +101,9 @@ class OrderStatusUpdate extends Mailable
             // If there is only one parameter, parse just one
             else {
                 $finalParameterValue =  ${"order"}->{$parameter};
+                if($parameter == "orderStatus") {
+                  $finalParameterValue = $orderStatus->name;
+                }
             }
             
 
