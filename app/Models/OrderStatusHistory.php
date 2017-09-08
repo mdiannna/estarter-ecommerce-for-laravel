@@ -37,18 +37,12 @@ class OrderStatusHistory extends Model
 	*/
 	public function sendStatusUpdateMail(Mail $mail, OrderStatus $orderStatus, Order $order, User $user) 
     {
-        // $userEmail = 'estartertest@test.com';
         $userEmail = $user->email;
-          // \Alert::success("something")->flash();    
-        // $errorMessage = "sss";
-
+          
         try {
         	$orderStatusUpdate = new OrderStatusUpdate($orderStatus, $order);
         	
-        	// dd($orderStatusUpdate->errorMessage);
         	if($orderStatusUpdate->hasError) {
-        		
-        		// dd($orderStatusUpdate->errorMessage);	
 	        	throw new Exception($orderStatusUpdate->errorMessage);
         	}
         	$mail::to($userEmail)->send($orderStatusUpdate);    
@@ -56,18 +50,8 @@ class OrderStatusHistory extends Model
 		
 
         } catch (Exception $e){
-			// dd($e->getMessage());        
-        // 	\Alert::error(trans("mail.mail_not_sent") . ". " . trans("notificationtemplate.error_in_template")  . 
-        // 		$e->getMessage() . "")->flash();  
-        // \Alert::error("lalala");
-        	
-        	// dd($e->getMessage());        
-
             \Alert::error($e->getMessage())->flash();    
-
-        	// return($e->getMessage());
-        	
-        }
+	    }
 
     }
 

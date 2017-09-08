@@ -148,9 +148,7 @@ class OrderStatusUpdate extends Mailable
 
         }
 
-
                  
-        // dd( $this->errorMessage );
         if($this->errorMessage != "") {
             return null;
         }
