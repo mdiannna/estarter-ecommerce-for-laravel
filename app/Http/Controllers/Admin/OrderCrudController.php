@@ -134,7 +134,6 @@ class OrderCrudController extends CrudController
     public function sendStatusUpdateMail(Request $request, OrderStatusHistory $orderStatusHistory, Mail $mail, OrderStatus $orderStatus, Order $order,  User $user) 
     {
         $orderStatusHistory->sendStatusUpdateMail($mail, $orderStatus, $order, $user);
-        // return redirect()->back();
 
     }
 
@@ -155,10 +154,12 @@ class OrderCrudController extends CrudController
             $this->crud->update($request->input('order_id'), ['status_id' => $request->input('status_id')]);
             \Alert::success(trans('order.status_updated'))->flash();    
 
+            // Send status update mail
             $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);
         }
         else {
             if($request->input('submit-btn') == 'resend_mail'){
+                // Send status update mail
                 $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);
                 \Alert::success(trans('mail.mail_was_sent'))->flash();    
             }

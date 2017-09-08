@@ -96,7 +96,6 @@ class OrderStatusUpdate extends Mailable
                 else{
                     return null;
                 }
-                  
             }
             // If there is only one parameter, parse just one
             else {
@@ -114,7 +113,6 @@ class OrderStatusUpdate extends Mailable
                 // Show error notification
                  \Alert::error(trans('common.parameter') . " " . $parameter . " " . trans('common.is_wrong'))->flash();  
                  return null;  
-
             }
 
             // Look for more {{ and }}
