@@ -54,17 +54,7 @@ class OrderStatusUpdate extends Mailable
     }
 
 
-    /**
-     * Filter parameter string - delete spaces and &nbsp;
-     *
-     * @return string
-     */
-    public function filterParametersString($substrParameter) {
-        $parameter = preg_replace('/\s+/', '', $substrParameter);
-        $parameter = str_replace('&nbsp;', '', $parameter);
-        return $parameter;
-    }
-
+  
 
     /**
      * Get error message after parsing notification template
@@ -152,16 +142,14 @@ class OrderStatusUpdate extends Mailable
 
         while($posStart !== false && $posEnd !== false ) {
 
-            $substrParameter = substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );
-            
-            $parameter = $this->filterParametersString($substrParameter);            
+            $parameter= substr($orderMailContent, $posStart+2, $posEnd-$posStart-2 );  
             $finalParameterValue = $this->getValuesFromParameters($orderStatus, $order, $parameter);
 
             if(isset($finalParameterValue)) {
-                $orderMailContent = str_replace("{{" . $substrParameter . "}}", $finalParameterValue, $orderMailContent);    
+                $orderMailContent = str_replace("{{" . $parameter. "}}", $finalParameterValue, $orderMailContent);    
             }
             else {
-                $orderMailContent = str_replace("{{" . $substrParameter . "}}", "", $orderMailContent);
+                $orderMailContent = str_replace("{{" . $parameter. "}}", "", $orderMailContent);
                 array_push($wrongParameters, $parameter);
             }
 

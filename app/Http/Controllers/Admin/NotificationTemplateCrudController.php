@@ -28,7 +28,7 @@ class NotificationTemplateCrudController extends CrudController
         |--------------------------------------------------------------------------
         */
 
-        $this->crud->setFromDb();
+        // $this->crud->setFromDb();
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');
@@ -165,7 +165,8 @@ class NotificationTemplateCrudController extends CrudController
 
     public function store(StoreRequest $request)
     {
-        // your additional operations before save here
+        $this->request['content'] = $this->filterTemplateParameters($request->content);   
+
         $redirect_location = parent::storeCrud();
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
@@ -174,10 +175,54 @@ class NotificationTemplateCrudController extends CrudController
 
     public function update(UpdateRequest $request)
     {
-        // your additional operations before save here
+        $this->request['content'] = $this->filterTemplateParameters($request->content);   
+
         $redirect_location = parent::updateCrud();
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;
+    }
+
+    /**
+     * Filter parameter string - delete spaces and &nbsp;
+     *
+     * @return string
+     */
+    public function filterParametersString($substrParameter) {
+        $parameter = preg_replace('/\s+/', '', $substrParameter);
+        $parameter = str_replace('&nbsp;', '', $parameter);
+        return $parameter;
+    }
+
+    /**
+     * Filter template parameters - delete spaces and &nbsp;
+     *
+     * @return string
+     */
+    public function filterTemplateParameters($content){
+        
+        $posStart = strpos($content, "{{");
+        $posEnd = strpos($content, "}}");
+
+        while($posStart !== false && $posEnd !== false ) {
+
+            $substrParameter = substr($content, $posStart+2, $posEnd-$posStart-2 );
+            $parameter = $this->filterParametersString($substrParameter);            
+
+            $content = str_replace("{{" . $substrParameter . "}}", "{{" . $parameter . "}}", $content);    
+        
+            // Look for more {{ and }}
+            if(isset($posEnd) && $posEnd < strlen($content) ) {
+                $posStart = strpos($content, "{{", $posStart+2);
+                $posEnd = strpos($content, "}}", $posEnd);    
+            }
+            else {
+                $posStart = false;
+                $posEnd = false;
+            }
+            
+        }
+        
+        return $content;
     }
 }
