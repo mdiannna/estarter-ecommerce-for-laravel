@@ -32,6 +32,7 @@ class AlterOrderStatusesTable extends Migration
     public function down()
     {
         Schema::table('order_statuses', function (Blueprint $table) {
+            $table->dropForeign(['notification_template_id']);
             $table->dropColumn('notification_template_id');
         });
     }
