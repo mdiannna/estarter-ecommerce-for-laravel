@@ -126,16 +126,6 @@ class OrderCrudController extends CrudController
     }
 
 
-    /**
-     * Send status update mail
-     *
-     * @return void
-     */
-    public function sendStatusUpdateMail(Request $request, OrderStatusHistory $orderStatusHistory, Mail $mail, OrderStatus $orderStatus, Order $order,  User $user) 
-    {
-        $orderStatusHistory->sendStatusUpdateMail($mail, $orderStatus, $order, $user);
-
-    }
 
     public function updateStatus(Request $request, OrderStatusHistory $orderStatusHistory,
                                  OrderStatus $orderStatus, Order $order, Mail $mail, User $user)
@@ -156,21 +146,12 @@ class OrderCrudController extends CrudController
             \Alert::success(trans('order.status_updated'))->flash();    
 
             // Send status update mail
-            $errorSendMail = $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);
-             // dd($errorSendMail);
+            $errorSendMail =  $orderStatusHistory->sendStatusUpdateMail($mail, $thisOrderStatus, $thisOrder, $thisUser);
         }
         else {
             if($request->input('submit-btn') == 'resend_mail'){
                 // Send status update mail
-                try{
-                    $errorSendMail = $this->sendStatusUpdateMail($request, $orderStatusHistory, $mail, $thisOrderStatus, $thisOrder, $thisUser);    
-                } catch(Exception $e) {
-                \Alert::error("error")->flash();        
-                }
-                
-                // dd($errorSendMail);
-                // \Alert::success(trans('mail.mail_was_sent'))->flash();    
-                
+                $errorSendMail =  $orderStatusHistory->sendStatusUpdateMail($mail, $oldStatus, $thisOrder, $thisUser);
             }
             else {
                 \Alert::warning(trans('order.status_is_the_same'))->flash();                

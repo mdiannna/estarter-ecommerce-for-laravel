@@ -26,5 +26,8 @@ return [
 	'date'             => 'Date',
 	'total'            => 'Total',
 	'parameter'		   => 'Parameter',
+	'parameters'	   => 'Parameters',
 	'is_wrong'		   => 'is wrong',
+	'is_incorrect'	   => 'is incorrect',
+	'are_incorrect'	   => 'are incorrect',
 ];

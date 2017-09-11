@@ -37,7 +37,7 @@ class OrderStatusCrudController extends CrudController
             ],
             [
                'name'       => 'notification_template_id',
-               'label'      => trans('notificationtemplates.notification_template'),
+               'label'      => trans('notificationtemplate.notification_template'),
                'type'       => 'select2',
                'entity'     => 'notificationTemplate',
                'attribute'  => 'name',
@@ -107,7 +107,7 @@ class OrderStatusCrudController extends CrudController
             ],
             [
                'name'       => 'notification_template_id',
-               'label'      => trans('notificationtemplates.notification_template'),
+               'label'      => trans('notificationtemplate.notification_template'),
                'type'       => 'select2',
                'entity'     => 'notificationTemplate',
                'attribute'  => 'name',
